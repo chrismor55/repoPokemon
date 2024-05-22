@@ -44,6 +44,7 @@ public class interfaz extends JFrame {
 		JButton btnNewButton = new JButton("nuevo botonzaco");
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				
 			}
 		});
 		contentPane.add(btnNewButton);

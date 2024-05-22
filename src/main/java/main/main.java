@@ -15,75 +15,103 @@ import com.mongodb.client.model.Updates;
 
 import org.bson.Document;
 public class main {
-	
-    public static void main(String[] args) {
-    	
-        String connectionString = "mongodb+srv://chrmor55:ch241105@clusterchristian.txpceyk.mongodb.net/?retryWrites=true&w=majority&appName=ClusterChristian";
-        ServerApi serverApi = ServerApi.builder()
-                .version(ServerApiVersion.V1)
-                .build();
-        MongoClientSettings settings = MongoClientSettings.builder()
-                .applyConnectionString(new ConnectionString(connectionString))
-                .serverApi(serverApi)
-                .build();
-        // Create a new client and connect to the server
-        try (MongoClient mongoClient = MongoClients.create(settings)) {
+	static  String connectionString = "mongodb+srv://chrmor55:ch241105@clusterchristian.txpceyk.mongodb.net/?retryWrites=true&w=majority&appName=ClusterChristian";
+    static ServerApi serverApi = ServerApi.builder()
+             .version(ServerApiVersion.V1)
+             .build();
+    static MongoClientSettings settings = MongoClientSettings.builder()
+             .applyConnectionString(new ConnectionString(connectionString))
+             .serverApi(serverApi)
+             .build();
+   
+       
+       public main() {
+    	   
+       }
+		 
+    
+
+	private static void deletePokemon() {
+		 try (MongoClient mongoClient = MongoClients.create(settings)) {
+	        	
+	            try {
+	            	MongoDatabase database = mongoClient.getDatabase("Christian");
+	            	MongoCollection<Document> collection = database.getCollection("Pokemon");
+	            	
+	            	collection.deleteOne(Filters.eq("nombre","Piplup"));
+	                System.out.println("Pokemon borrado");
+	                
+	                Document deletePokemon = collection.find(Filters.eq("nombre","Piplup")).first();
+	                if(deletePokemon != null) {
+	                	System.out.println("El pokemon todavia existe "+ deletePokemon.toJson());
+	                }else {
+	                	System.out.println("Se elimino correctamente");
+	                }
+	                
+	            } catch (MongoException e) {
+	                e.printStackTrace();
+	            }
+	        }
+		
+		
+	}
+
+	private static void findPokemon() {
+		try (MongoClient mongoClient = MongoClients.create(settings)) {
         	
             try {
             	MongoDatabase database = mongoClient.getDatabase("Christian");
             	MongoCollection<Document> collection = database.getCollection("Pokemon");
-            	
-            	//crearPokemon
-            	addPokemon(collection);
-            	 
-                //Actualizar pokemon
-            	updatePokemon(collection);
                 
-                //encontrar pokemon
-            	findPokemon(collection);
-                
-                //borrar pokemon
-            	deletePokemon(collection);
+                Document foundPokemon = collection.find(Filters.eq("nombre","tipo")).first();
+                if(foundPokemon != null) {
+                	System.out.println("Pokemon encontrado "+foundPokemon.toJson());
+                }else {
+                	System.out.println("No se ha encontrado el pokemon");
+                }
                 
             } catch (MongoException e) {
                 e.printStackTrace();
             }
         }
-    }
+		
+		
+	}
 
-	private static void deletePokemon(MongoCollection<Document> collection) {
-		collection.deleteOne(Filters.eq("nombre","Piplup"));
-        System.out.println("Pokemon borrado");
-        
-        Document deletePokemon = collection.find(Filters.eq("nombre","Piplup")).first();
-        if(deletePokemon != null) {
-        	System.out.println("El pokemon todavia existe "+ deletePokemon.toJson());
-        }else {
-        	System.out.println("Se elimino correctamente");
+	private static void updatePokemon() {
+try (MongoClient mongoClient = MongoClients.create(settings)) {
+        	
+            try {
+            	MongoDatabase database = mongoClient.getDatabase("Christian");
+            	MongoCollection<Document> collection = database.getCollection("Pokemon");
+                
+            	collection.updateOne(Filters.eq("nombre", "Piplup"),Updates.set("level", 14));
+                System.out.println("Pokemon Actualizado");
+                
+            } catch (MongoException e) {
+                e.printStackTrace();
+            }
         }
 		
+		
 	}
 
-	private static void findPokemon(MongoCollection<Document> collection) {
-		Document foundPokemon = collection.find(Filters.eq("nombre","tipo")).first();
-        if(foundPokemon != null) {
-        	System.out.println("Pokemon encontrado "+foundPokemon.toJson());
-        }else {
-        	System.out.println("No se ha encontrado el pokemon");
+	private static void addPokemon() {
+		try (MongoClient mongoClient = MongoClients.create(settings)) {
+        	
+            try {
+            	MongoDatabase database = mongoClient.getDatabase("Christian");
+            	MongoCollection<Document> collection = database.getCollection("Pokemon");
+                
+            	Document newPokemon = new Document ("nombre","Piplup").append("tipo", "Agua");
+                collection.insertOne(newPokemon);
+                System.out.println("Pokemon insertado");
+                
+            } catch (MongoException e) {
+                e.printStackTrace();
+            }
         }
 		
-	}
-
-	private static void updatePokemon(MongoCollection<Document> collection) {
-		collection.updateOne(Filters.eq("nombre", "Piplup"),Updates.set("level", 14));
-        System.out.println("Pokemon Actualizado");
-		
-	}
-
-	private static void addPokemon(MongoCollection<Document> collection) {
-		Document newPokemon = new Document ("nombre","Piplup").append("tipo", "Agua");
-        collection.insertOne(newPokemon);
-        System.out.println("Pokemon insertado");
 		
 	}
 }
