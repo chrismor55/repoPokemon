@@ -94,12 +94,11 @@ try (MongoClient mongoClient = MongoClients.create(settings)) {
             }
         }
 		
-		
 	}
 
 	private static void addPokemon() {
 		try (MongoClient mongoClient = MongoClients.create(settings)) {
-        	
+			
             try {
             	MongoDatabase database = mongoClient.getDatabase("Christian");
             	MongoCollection<Document> collection = database.getCollection("Pokemon");
